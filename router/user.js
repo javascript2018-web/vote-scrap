@@ -8,7 +8,7 @@ const {
 const router = express.Router();
 
 router.post("/register", userRegister);
-router.post("/api/send_message", userRegister);
+app.post('/api/send_message', upload.single('attachment'), handleCommunication);
 router.get("/singleByEmail/:email", singleByEmail);
 
 

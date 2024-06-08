@@ -115,39 +115,6 @@ app.put('/api/update_client/:id', async (req, res) => {
 });
 
 
-const sendEmail = async (to, subject, text) => {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  const email = {
-    to,
-    from: process.env.SENDGRID_FROM_EMAIL,
-    subject,
-    text,
-  };
-  console.log('Sending Email:', email);
-  await sgMail.send(email);
-};
-
-const sendSms = async (to, body) => {
-  let sms = {
-    from: process.env.TWILIO_PHONE_NUMBER,
-    to: "+14324380699",
-    body,
-  };
-  console.log('Sending SMS:', sms);
-  await client.messages.create(sms);
-};
-
-const sendWhatsapp = async (to, message) => {
-  const whatsapp = {
-    body: message,
-    from: `whatsapp:${process.env.TWILIO_PHONE_NUMBER}`,
-    to: `whatsapp:${to}`,
-  };
-  console.log('Sending WhatsApp message:', whatsapp);
-  await client.messages.create(whatsapp);
-};
-
-
 
 app.use("/api/v1/user", userRouter);
 
