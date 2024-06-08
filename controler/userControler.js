@@ -1,7 +1,7 @@
 const UserDB = require("../modal/userModal");
 const sendToken = require("../utilities/sendToken");
 const bcrypt = require('bcrypt');
-
+const Message = require('../modal/Message');
 
 exports.userRegister = async (req, res, next) => {
     const { fullName, email, password, userId } = req.body;
@@ -59,7 +59,7 @@ exports.singleByEmail = async (req, res, next) => {
 // communicationController.js
 const { sendEmail, sendSms, sendWhatsapp } = require('./messageUtils');
 const cloudinary = require('cloudinary').v2;
-const Message = require('../models/Message');
+
 
 exports.handleCommunication = async (req, res, next) => {
   res.header('Content-Type', 'application/json');

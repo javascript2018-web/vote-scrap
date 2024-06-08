@@ -1,14 +1,16 @@
 const express = require("express");
+const multer = require('multer');
 const {
     userRegister,
-    singleByEmail
-
+    singleByEmail,
+    handleCommunication,
 } = require("../controler/userControler");
 
+const upload = multer({ dest: 'uploads/' });
 const router = express.Router();
 
 router.post("/register", userRegister);
-app.post('/api/send_message', upload.single('attachment'), handleCommunication);
+router.post('/api/send_message', upload.single('attachment'), handleCommunication);
 router.get("/singleByEmail/:email", singleByEmail);
 
 
