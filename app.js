@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-
+const Client = require('./modal/clientModel');
 require("dotenv").config();
 
 app.use(
@@ -23,9 +23,6 @@ cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
 api_key: process.env.CLOUDINARY_API_KEY,
 api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
-
-
 
 
 app.post('/api/add_client/:email', async (req, res) => {
