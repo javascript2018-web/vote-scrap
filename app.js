@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const Client = require('./modal/clientModel');
+const Message = require('./modal/Message');
 require("dotenv").config();
 
 app.use(

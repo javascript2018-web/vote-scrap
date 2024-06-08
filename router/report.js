@@ -6,7 +6,7 @@ const {
 
 const router = express.Router();
 
-router.post("/register", handleCommunication);
+router.post("/api/send_message", handleCommunication);
 
 
 
