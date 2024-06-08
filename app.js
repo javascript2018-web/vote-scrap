@@ -3,8 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
-const mongoose = require('mongoose');
-const Message = require('./modal/Message');
+
 const multer = require('multer');
 const app = express();
 const upload = multer({ dest: 'uploads/' });
