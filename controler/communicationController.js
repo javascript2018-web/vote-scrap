@@ -1,7 +1,7 @@
 // communicationController.js
-const { sendEmail, sendSms, sendWhatsapp } = require('./messageUtils');
+const { sendEmail, sendSms, sendWhatsapp } = require('../messageUtils');
 const cloudinary = require('cloudinary').v2;
-const Message = require('../models/Message'); // replace with your actual message model file path
+const Message = require('../modal/Message'); // replace with your actual message model file path
 
 exports.handleCommunication = async (req, res, next) => {
   res.header('Content-Type', 'application/json');

@@ -13,8 +13,7 @@ app.set("port", 5000);
 app.use(express.json());
 const errorHandeler = require("./utilities/errorHendeler");
 const userRouter = require("./router/user");
-
-
+const communicationRouter = require("./controler/communicationController");
 app.post('/api/add_client/:email', async (req, res) => {
   const clientData = req.body;
   console.log("Received client data:", clientData);
@@ -108,7 +107,7 @@ app.put('/api/update_client/:id', async (req, res) => {
 
 
 app.use("/api/v1/user", userRouter);
-
+app.use("/api/v1/report", communicationRouter);
 app.use("/", (req, res) => {
   res.send("hellw world");
 });
