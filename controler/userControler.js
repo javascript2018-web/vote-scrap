@@ -1,85 +1,55 @@
-const User = require("../modal/userModal");
-const bcrypt = require("bcrypt");
+const UserDB = require("../modal/userModal");
+const sendToken = require("../utilities/sendToken");
+const bcrypt = require('bcrypt');
 
-exports.registerUser = async (req, res, next) => {
-  const { data } = req.body;
-  console.log(data);
-  try {
-    const user = await User.findOne({ voterid: data.voterid });
 
-    if (user) {
-      return res
-        .status(202)
-        .send({ success: false, message: "User already exists" });
-    }
+exports.userRegister = async (req, res, next) => {
+    const { fullName, email, password, userId } = req.body;
+    console.log(req.body);
+  
+    try {
+      const user = await UserDB.findOne({ email });
+      if (user) {
+        return res
+          .status(202)
+          .send({ success: false, message: "User already exists" });
+      }
+  
+      const saltRounds = 10;
+      const salt = await bcrypt.genSalt(saltRounds);
+      console.log("Generated Salt:", salt);
+  
+      const hashedPassword = await bcrypt.hash(`${password}`, salt);
+      console.log("Hashed Password:", hashedPassword);
+  
+      const addedUser = await UserDB.create({
+        fullName,
+        email,
+        password: hashedPassword,
+        userId: userId,
+      });
+  
+      sendToken(addedUser, 200, res);
+    } catch (e) {
+      console.log(e);
+      res.status(500).send({ success: false, message: "Server Error" });
+}}
 
-    const addedUser = await User.create({
-      ...data,
-    });
-    res.status(200).json({ success: true, addedUser });
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-exports.getSingleUser = async (req, res, next) => {
-  console.log("Received data from the client req. body:", req.body);
-  try {
-    const userEmail = req.params.email;
-
-    // Fetch the user from the database using the provided email
-    const user = await User.findOne({ email: userEmail });
-    console.log("dfdfdf");
-    if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
-    }
-
-    res.status(200).json({ success: true, user });
-  } catch (error) {
-    console.error("Error fetching user by email:", error);
-    res.status(500).json({ success: false, error: "Internal Server Error" });
-  }
-};
-
-exports.getUserByEmail = async (req, res, next) => {
-  try {
-    const { voterid } = req.query;
-
-    const user = await User.findOne({ voterid });
-
-    res.json(user);
-  } catch (error) {
-    console.error("Error fetching addresses:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-exports.postVote = async (req, res, next) => {
-  try {
-    const { voterid } = req.query;
-    const body = req.body;
-    console.log(body);
-    const updatedUser = await User.findOneAndUpdate(
-      { voterid },
-      { $set: { vote: body.vote } },
-      { new: true, upsert: true } // Combine options correctly
-    );
-
-    res.json(updatedUser);
-    console.log(updatedUser);
-  } catch (error) {
-    console.error("Error fetching addresses:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-exports.allUser = async (req, res, next) => {
-  try {
-    const user = await User.find({});
-
-    res.json(user);
-  } catch (error) {
-    console.error("Error fetching addresses:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
+exports.singleByEmail = async (req, res, next) => {
+    console.log("Received request to fetch user by email:", req.params.email);
+    
+    try {
+      const userEmail = req.params.email;
+  
+      // Fetch the user from the database using the provided email
+      const user = await UserDB.findOne({ email: userEmail });
+      
+      if (!user) {
+        return res.status(404).json({ success: false, message: "User not found" });
+      }
+  
+      res.status(200).json({ success: true, user });
+    } catch (error) {
+      console.error("Error fetching user by email:", error);
+      res.status(500).json({ success: false, message: "Internal Server Error" });
+    }}

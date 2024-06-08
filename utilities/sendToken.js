@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const JWT_SECRET = "DPEEHEOEEPEERUR78USXPEPEEHC";
+const JWT_SECRET = "DPEEHEOEEPEERUR78USXPEPEEHA";
 const sendToken = (user, statusCode, res) => {
   console.log(user);
 
