@@ -3,37 +3,33 @@ const jwt = require("jsonwebtoken");
 const userSchema = new mongoose.Schema({
   fullName: {
     type: String,
-    required: true,
+    required: [true, "Please Enter Your Name"],
   },
-  userType: {
+  email: {
     type: String,
-    default: "user",
-  },
-  voterid: {
-    type: String,
-    required: true,
+    required: [true, "Please Enter Your Email"],
     unique: true,
-  },
-  dob: {
-    type: Date,
-    required: true,
   },
   password: {
     type: String,
-    required: true,
+    required: [true, "Please Enter Your Password"],
   },
-  constituency: {
+  userId: {
+    type: Number,
+    unique: true,
+  },
+  role: {
     type: String,
-    required: true,
+    default: "user",
   },
-  uvc: {
-    type: String,
-    required: true,
-  },
-  vote: {
-    type: String,
-  },
+
 });
+
+userSchema.methods.getJWTtoken = function () {
+  return jwt.sign({ email: this.email }, "DPEEHEOEEPEERUR78USXPEPEEHA", {
+    expiresIn: "1h",
+  });
+};
 
 const User = mongoose.model("User", userSchema);
 
