@@ -3,7 +3,7 @@ require('dotenv').config();
 
 mongoose.set('strictQuery', false);
 const database = () => {
-  const uri = process.env.database_uri;
+  const uri = process.env.DATABASE_URI;
 
   console.log("Database URI:", uri); // Add this line for debugging
 
