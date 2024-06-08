@@ -1,7 +1,7 @@
 const UserDB = require("../modal/userModal");
 const sendToken = require("../utilities/sendToken");
 const bcrypt = require('bcrypt');
-const Message = require('../modal/Message');
+
 
 exports.userRegister = async (req, res, next) => {
     const { fullName, email, password, userId } = req.body;
