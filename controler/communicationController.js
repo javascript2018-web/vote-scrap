@@ -10,6 +10,7 @@ cloudinary.config({
 });
 
 exports.handleCommunication = async (req, res, next) => {
+  
   res.header('Content-Type', 'application/json');
 
   console.log('Raw Request Body:', req.body);
