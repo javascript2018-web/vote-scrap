@@ -3,12 +3,20 @@ const { sendEmail, sendSms, sendWhatsapp } = require('../messageUtils');
 const cloudinary = require('cloudinary').v2;
 const Message = require('../modal/Message');
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 exports.handleCommunication = async (req, res, next) => {
   res.header('Content-Type', 'application/json');
 
+  console.log('Raw Request Body:', req.body);
+
   try {
     const { subject, content, group, messageType } = req.body;
-    console.log('Initial Request Body:', req.body);
+    console.log('Parsed Request Body:', req.body);
 
     // Ensure empty group is handled
     if (!group) {
