@@ -1,12 +1,12 @@
 const express = require("express");
-const multer = require('multer');
+// const multer = require('multer');
 const {
     handleCommunication,
 } = require("../controler/communicationController");
 
-const upload = multer({ dest: 'uploads/' });
+// const upload = multer({ dest: 'uploads/' });
 const router = express.Router();
 
-router.post('/send_message', upload.single('attachment'), handleCommunication);
+router.post('/send_message',  handleCommunication);
 
 module.exports = router;
