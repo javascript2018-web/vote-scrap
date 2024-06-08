@@ -15,19 +15,18 @@ const errorHandeler = require("./utilities/errorHendeler");
 const userRouter = require("./router/user");
 
 
-const clientSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  phone: String,
-  country: String,
-  city: String,
-  state: String,
-  group: String,
-  userEmail: String
 
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+api_key: process.env.CLOUDINARY_API_KEY,
+api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const Client = mongoose.model('Client', clientSchema);
+
+
+
 
 app.post('/api/add_client/:email', async (req, res) => {
   const clientData = req.body;
