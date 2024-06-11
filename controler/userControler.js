@@ -62,6 +62,46 @@ exports.getAllUser = async (req, res, next) => {
     res.status(500).send('Server Error');
   }
 }
+// Middleware to check the JWT token and protect routes
+const authenticateToken = (req, res, next) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+};
+exports.updateUserRole = async (req, res) => {
+  const { id } = req.params;
+  const { role } = req.body;
+
+  try {
+    const user = await UserDB.findById(id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    user.role = role;
+    await user.save();
+
+    res.json({ message: 'User role updated successfully' });
+  } catch (error) {
+    console.error('Error updating user role:', error);
+    res.status(500).json({ error: 'Error updating user role' });
+  }
+};
 
 
-
+exports.handleDelete = async (req, res) => {
+  try {
+    const result = await Use.findByIdAndDelete(req.params.id);
+    if (!result) {
+      return res.status(404).send({ message: 'user not found' });
+    }
+    res.send({ message: 'user deleted successfully' });
+  } catch (error) {
+    res.status(500).send({ message: 'Error deleting user', error });
+  }
+}

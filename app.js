@@ -95,6 +95,7 @@ app.delete('/api/delete_client/:id', async (req, res) => {
   }
 });
 
+
 // Update client
 app.put('/api/update_client/:id', async (req, res) => {
   try {
