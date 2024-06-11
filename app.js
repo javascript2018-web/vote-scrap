@@ -55,9 +55,6 @@ app.get('/api/clients', async (req, res) => {
   }
 });
 
-// Define the /api/user_clients endpoint
-
-
 // all message
 app.get('/api/allmessage', async (req, res) => {
   try {

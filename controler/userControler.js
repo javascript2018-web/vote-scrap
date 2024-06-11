@@ -52,7 +52,16 @@ exports.singleByEmail = async (req, res, next) => {
     } catch (error) {
       console.error("Error fetching user by email:", error);
       res.status(500).json({ success: false, message: "Internal Server Error" });
-    }}
+}}
+
+exports.getAllUser = async (req, res, next) => {
+  try {
+    const users = await UserDB.find();
+    res.json(users);
+  } catch (err) {
+    res.status(500).send('Server Error');
+  }
+}
 
 
 
