@@ -15,11 +15,12 @@ exports.handleCommunication = async (req, res) => {
 
     console.log('Raw Request Body:', req.body);
 
-    const { subject, content, group, messageType } = req.body;
+    const { subject, content, group, messageType,email,phoneNumber } = req.body;
 
-    if (!group) {
-      return res.status(400).json({ error: 'Group (phone number or email) is required' });
+    if (!group && !email && !phoneNumber) {
+      return res.status(400).json({ error: 'At least one recipient is required' });
     }
+
 
     let attachmentUrl = '';
     if (req.file) {
@@ -49,6 +50,8 @@ exports.handleCommunication = async (req, res) => {
       group,
       attachmentUrl,
       messageType,
+      email: messageType === 'email' ? email : undefined,
+      phoneNumber: (messageType === 'sms' || messageType === 'whatsapp') ? phoneNumber : undefined,
     });
 
     console.log('Saving message to database:', newMessage);
@@ -57,11 +60,14 @@ exports.handleCommunication = async (req, res) => {
 
     try {
       if (messageType === 'email') {
-        await sendEmail(group, subject, content);
+        await sendEmail(email, subject, content); 
       } else if (messageType === 'sms') {
-        await sendSms(group, content);
+        await sendSms(phoneNumber, content);
       } else if (messageType === 'whatsapp') {
-        await sendWhatsapp(group, content);
+        if (!phoneNumber) {
+          return res.status(400).json({ error: 'Phone number is required for WhatsApp message type.' });
+        }
+        await sendWhatsapp(phoneNumber, content);
       } else {
         return res.status(400).json({ error: 'Invalid message type' });
       }

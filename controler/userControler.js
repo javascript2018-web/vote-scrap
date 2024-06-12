@@ -62,17 +62,8 @@ exports.getAllUser = async (req, res, next) => {
     res.status(500).send('Server Error');
   }
 }
-// Middleware to check the JWT token and protect routes
-const authenticateToken = (req, res, next) => {
-  const token = req.headers['authorization']?.split(' ')[1];
-  if (!token) return res.sendStatus(401);
 
-  jwt.verify(token, SECRET_KEY, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
-  });
-};
+
 exports.updateUserRole = async (req, res) => {
   const { id } = req.params;
   const { role } = req.body;
@@ -96,7 +87,7 @@ exports.updateUserRole = async (req, res) => {
 
 exports.handleDelete = async (req, res) => {
   try {
-    const result = await Use.findByIdAndDelete(req.params.id);
+    const result = await UserDB.findByIdAndDelete(req.params.id);
     if (!result) {
       return res.status(404).send({ message: 'user not found' });
     }
@@ -105,3 +96,44 @@ exports.handleDelete = async (req, res) => {
     res.status(500).send({ message: 'Error deleting user', error });
   }
 }
+
+exports.createAdmin = async (req, res) => {
+  const { name, email, whatsapp, phone, password,userId, confirmPassword } = req.body;
+console.log(req.body)
+  // Basic validation
+  if (!name || !email || !whatsapp || !phone || !password || !confirmPassword) {
+    return res.status(400).json({ error: 'Please fill out all fields' });
+  }
+
+  if (password !== confirmPassword) {
+    return res.status(400).json({ error: 'Passwords do not match' });
+  }
+
+  try {
+    // Check if the admin already exists
+    const adminExists = await UserDB.findOne({ email });
+    if (adminExists) {
+      return res.status(400).json({ error: 'Admin with this email already exists' });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create new admin
+    const newAdmin = new UserDB({
+      fullName: name,
+      email,
+      whatsapp,
+      phone,
+      password: hashedPassword,
+      userId: userId,
+      role: 'admin'
+    });
+    console.log("jjj",newAdmin)
+    await newAdmin.save();
+    res.status(201).json({ message: 'Admin created successfully', admin: newAdmin });
+  } catch (error) {
+    console.error('Error creating admin:', error);
+    res.status(500).json({ error: 'Error creating admin' });
+  }
+};

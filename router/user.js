@@ -4,13 +4,15 @@ const {
     singleByEmail,
     getAllUser,
     updateUserRole,
-    handleDelete
+    handleDelete,
+    createAdmin
 } = require("../controler/userControler");
 
 
 const router = express.Router();
 
 router.post("/register", userRegister);
+router.post("/create-admin", createAdmin);
 router.get("/singleByEmail/:email", singleByEmail);
 router.get("/allusers", getAllUser)
 router.patch("/adminpromote/:id", updateUserRole)

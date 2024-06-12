@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema({
     required: [true, "Please Enter Your Email"],
     unique: true,
   },
+  whatsapp: { type: String },
+  phone: { type: String },
   password: {
     type: String,
     required: [true, "Please Enter Your Password"],
@@ -18,7 +20,8 @@ const userSchema = new mongoose.Schema({
     type: Number,
     unique: true,
   },
-  role: { type: String, enum: ['user', 'admin'], default: 'user' }
+  role: { type: String, enum: ['user', 'admin'], default: 'user' },
+
 
 });
 
