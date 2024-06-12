@@ -1,57 +1,32 @@
 const axios = require('axios');
-const net = require('net');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-// Function to send email using raw SMTP
+const transporter = nodemailer.createTransport({
+  host: process.env.OUTGOING_SERVER,
+  port: process.env.SMTP_PORT,
+  secure: true, // true for 465, false for other ports
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
 const sendEmail = async (to, subject, text) => {
-  const email = {
-    to:email,
+  const mailOptions = {
     from: process.env.EMAIL_USER,
-    subject,
-    text,
+    to: to,
+    subject: subject,
+    text: text,
   };
 
-  console.log('Sending Email:', email);
-
-  return new Promise((resolve, reject) => {
-    const client = net.createConnection({
-      port: process.env.SMTP_PORT,
-      host: process.env.OUTGOING_SERVER,
-    });
-
-    client.setEncoding('utf8');
-
-    client.on('connect', () => {
-      client.write('HELO vchurch.us\r\n');
-      client.write('AUTH LOGIN\r\n');
-      client.write(Buffer.from(process.env.EMAIL_USER).toString('base64') + '\r\n');
-      client.write(Buffer.from(process.env.EMAIL_PASS).toString('base64') + '\r\n');
-      client.write(`MAIL FROM:<${process.env.EMAIL_USER}>\r\n`);
-      client.write(`RCPT TO:<${email.to}>\r\n`);
-      client.write('DATA\r\n');
-      client.write(`Subject: ${subject}\r\n`);
-      client.write(`Content-Type: text/plain; charset=utf-8\r\n`);
-      client.write('\r\n');
-      client.write(`${text}\r\n`);
-      client.write('.\r\n');
-      client.write('QUIT\r\n');
-      client.end();
-    });
-
-    client.on('data', (data) => {
-      console.log('SMTP Server Response:', data);
-      if (data.includes('250 OK')) {
-        resolve();
-      } else if (data.includes('error') || data.includes('failed')) {
-        reject(new Error(data));
-      }
-    });
-
-    client.on('error', (err) => {
-      console.error('Error sending email:', err);
-      reject(err);
-    });
-  });
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Email sent: ' + info.response);
+  } catch (err) {
+    console.error('Error sending email: ', err);
+    throw err;
+  }
 };
 
 // Function to send SMS
