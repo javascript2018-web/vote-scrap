@@ -32,12 +32,12 @@ app.post('/api/add_client/:email', async (req, res) => {
 
   try {
     const userEmail = req.params.email;
-    console.log(userEmail)
+    console.log("user email",userEmail)
     const newClient = new Client({
       ...clientData,
       email: userEmail, 
     });
-
+    console.log("newClient",newClient)
     await newClient.save();
     res.status(200).send('Client added successfully');
   } catch (error) {
@@ -100,10 +100,10 @@ app.delete('/api/delete_client/:id', async (req, res) => {
 // Update client
 app.put('/api/update_client/:id', async (req, res) => {
   try {
-    const { name, phone, email, country, group } = req.body;
+    const { name, phone, mail, country, group } = req.body;
     const updatedClient = await Client.findByIdAndUpdate(
       req.params.id,
-      { name, phone, email, country, group },
+      { name, phone, mail, country, group },
       { new: true }
     );
     if (!updatedClient) {
