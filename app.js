@@ -32,6 +32,7 @@ app.post('/api/add_client/:email', async (req, res) => {
 
   try {
     const userEmail = req.params.email;
+    console.log(userEmail)
     const newClient = new Client({
       ...clientData,
       email: userEmail, 
