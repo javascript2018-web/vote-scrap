@@ -8,6 +8,6 @@ const upload = multer({ storage });
 
 const router = express.Router();
 
-router.post('/send_message', upload.single('attachment'), handleCommunication);
+router.post('/send_message/:email', upload.single('attachment'), handleCommunication);
 
 module.exports = router;

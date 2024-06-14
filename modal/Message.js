@@ -6,7 +6,7 @@ const MessageSchema = new mongoose.Schema({
   group: String,
   attachmentUrl: String,
   messageType: { type: String, enum: ['email', 'sms', 'whatsapp'] },
-  email: {
+  userEmail: {
     type: String,
     validate: {
       validator: function(v) {

@@ -1,6 +1,8 @@
 const axios = require('axios');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+const authorizationHeader = `AccessKey ${process.env.BIRD_API_KEY}`;
+console.log('Authorization Header:', authorizationHeader);
 
 const transporter = nodemailer.createTransport({
   host: process.env.OUTGOING_SERVER,
@@ -29,25 +31,51 @@ const sendEmail = async (to, subject, text) => {
   }
 };
 
-// Function to send SMS
-const sendSms = async (to, body) => {
+const isValidPhoneNumber = (phoneNumber) => {
+  const phoneRegex = /^\+\d{1,15}$/; // Regex pattern to match + followed by up to 15 digits
+  return phoneRegex.test(phoneNumber);
+};
+
+const sendSms = async (to, messageText) => {
+  if (!isValidPhoneNumber(to)) {
+    console.error('Invalid phone number format. It should include country code and start with a + (e.g., +1234567890)');
+    return;
+  }
+  const authorizationHeader = `AccessKey ${process.env.BIRD_API_KEY}`;
+  console.log('Authorization Header:', authorizationHeader);
   const smsPayload = {
-    to,
-    message: body,
+    body: {
+      type: "text",
+      text: {
+        text: messageText
+      }
+    },
+    receiver: {
+      contacts: [
+        {
+          identifierValue: to,
+          identifierKey: "phonenumber"
+        }
+      ]
+    }
   };
 
   console.log('Sending SMS:', smsPayload);
 
   try {
-    const response = await axios.post(process.env.BIRD_SMS_ENDPOINT, smsPayload, {
-      headers: {
-        'Authorization': `Bearer ${process.env.BIRD_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await axios.post(
+      'https://api.bird.com/workspaces/ee376371-aff6-4de4-b22d-85dc3f50218f/channels/a46e086e-4fac-42d7-8c42-79246b128399/messages',
+      smsPayload,
+      {
+        headers: {
+          'Authorization': authorizationHeader, // Include the API key in the headers
+          'Content-Type': 'application/json'
+        }
+      }
+    );
     console.log('SMS sent:', response.data);
   } catch (error) {
-    console.error('Error sending SMS:', error);
+    console.error('Error sending SMS:', error.response ? error.response.data : error.message);
     throw error;
   }
 };

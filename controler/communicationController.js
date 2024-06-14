@@ -14,10 +14,11 @@ exports.handleCommunication = async (req, res) => {
     res.header('Content-Type', 'application/json');
 
     console.log('Raw Request Body:', req.body);
+    console.log("Received request to fetch user by email:", req.params.email);
 
-    const { subject, content, group, messageType,email,phoneNumber } = req.body;
-
-    if (!group && !email && !phoneNumber) {
+    const { subject, content, group, messageType,phoneNumber } = req.body;
+    const userEmail = req.params.email;
+    if (!group && !userEmail && !phoneNumber) {
       return res.status(400).json({ error: 'At least one recipient is required' });
     }
 
@@ -50,7 +51,7 @@ exports.handleCommunication = async (req, res) => {
       group,
       attachmentUrl,
       messageType,
-      email: messageType === 'email' ? email : undefined,
+      userEmail: messageType === 'email' ? userEmail : undefined,
       phoneNumber: (messageType === 'sms' || messageType === 'whatsapp') ? phoneNumber : undefined,
     });
 
@@ -60,14 +61,14 @@ exports.handleCommunication = async (req, res) => {
 
     try {
       if (messageType === 'email') {
-        await sendEmail(email, subject, content); 
+        await sendEmail(userEmail, subject, content); 
       } else if (messageType === 'sms') {
-        await sendSms(phoneNumber, content);
+        await sendSms(`+${phoneNumber}`, content);
       } else if (messageType === 'whatsapp') {
         if (!phoneNumber) {
           return res.status(400).json({ error: 'Phone number is required for WhatsApp message type.' });
         }
-        await sendWhatsapp(phoneNumber, content);
+        await sendSms(`+${phoneNumber}`, content);
       } else {
         return res.status(400).json({ error: 'Invalid message type' });
       }
